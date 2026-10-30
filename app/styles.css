@@ -118,9 +118,11 @@ button {
 
 .brand h1 {
   margin: 0;
+  overflow: hidden;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.1px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -161,6 +163,7 @@ button {
   font-size: 13px;
   font-weight: 500;
   line-height: 1.2;
+  white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
@@ -336,7 +339,7 @@ button {
   padding: 12px;
   background-color: var(--bg-elevated);
   color: var(--muted);
-  content: "Imagem indisponível";
+  content: attr(data-broken-label);
   font-size: 12px;
   text-align: center;
 }

@@ -13,6 +13,17 @@ mantidos junto com o código e com os binários distribuídos.
 Os arquivos `theme/viewerjs-gphotos.*` e `app/vendor/viewer.min.*` são carregados
 localmente; o aplicativo não depende de CDN em tempo de execução.
 
+## i18next
+
+- Versão: 26.5.12
+- Licença: MIT
+- Copyright (c) 2022 i18next
+- https://github.com/i18next/i18next
+
+O build UMD (`app/vendor/i18next.min.js`) é copiado de `node_modules/i18next` pelo
+script `scripts/sync-theme.js` e carregado localmente no processo principal e no
+renderer. O pacote `i18next` é usado apenas no build (devDependency).
+
 ## Electron
 
 - Licença: MIT

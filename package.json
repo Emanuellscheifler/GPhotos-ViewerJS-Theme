@@ -31,7 +31,8 @@
   },
   "devDependencies": {
     "electron": "45.1.0",
-    "electron-builder": "26.18.0"
+    "electron-builder": "26.18.0",
+    "i18next": "^26.5.12"
   },
   "build": {
     "appId": "br.com.visualizadordefotos.app",
@@ -86,7 +87,11 @@
       "createStartMenuShortcut": true,
       "shortcutName": "Visualizador de Fotos",
       "runAfterFinish": true,
-      "warningsAsErrors": true
+      "warningsAsErrors": true,
+      "additionalLightArgs": [
+        "-loc",
+        "locale.wxl"
+      ]
     }
   }
 }

@@ -6,7 +6,7 @@
     http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none';"
   >
-  <title>Visualizador de Fotos</title>
+  <title data-i18n="app.name"></title>
   <link rel="stylesheet" href="vendor/viewer.min.css">
   <link rel="stylesheet" href="vendor/viewerjs-gphotos.css">
   <link rel="stylesheet" href="styles.css">
@@ -22,10 +22,10 @@
         </svg>
       </span>
       <div class="brand-text">
-        <h1>Visualizador de Fotos</h1>
+        <h1 data-i18n="app.name"></h1>
         <p class="status">
           <span class="spinner" aria-hidden="true"></span>
-          <span id="status-text">Nenhuma pasta aberta</span>
+          <span id="status-text" data-i18n="app.status.noFolder"></span>
         </p>
       </div>
     </div>
@@ -35,7 +35,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path>
         </svg>
-        Abrir pasta
+        <span data-i18n="app.buttons.openFolder"></span>
       </button>
       <button id="open-files" class="btn" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -43,7 +43,7 @@
           <circle cx="8.5" cy="8.5" r="1.5"></circle>
           <path d="m21 15-4.6-4.6a2 2 0 0 0-2.8 0L4 20"></path>
         </svg>
-        Abrir fotos
+        <span data-i18n="app.buttons.openPhotos"></span>
       </button>
     </div>
   </header>
@@ -57,38 +57,35 @@
           <path d="m21.5 15.5-5-5a2 2 0 0 0-2.8 0L4 20"></path>
         </svg>
       </div>
-      <h2>Abra uma pasta com suas fotos</h2>
-      <p class="empty-copy">
-        Escolha uma pasta ou selecione fotos soltas. Clique em qualquer imagem para abrir
-        o visualizador em tela cheia.
-      </p>
+      <h2 data-i18n="app.empty.title"></h2>
+      <p class="empty-copy" data-i18n="app.empty.copy"></p>
       <div class="empty-actions">
-        <button id="empty-open-folder" class="btn btn-primary" type="button">Abrir pasta</button>
-        <button id="empty-open-files" class="btn" type="button">Abrir fotos</button>
+        <button id="empty-open-folder" class="btn btn-primary" type="button" data-i18n="app.buttons.openFolder"></button>
+        <button id="empty-open-files" class="btn" type="button" data-i18n="app.buttons.openPhotos"></button>
       </div>
       <p class="empty-hint">
-        Você também pode arrastar uma pasta ou imagens para esta janela.<br>
-        Formatos: JPG, PNG, GIF, WEBP, BMP, AVIF e SVG.
+        <span data-i18n="app.empty.hint"></span><br>
+        <span data-i18n="app.empty.formats"></span>
       </p>
       <p class="empty-default">
-        <button id="set-default" class="link-button" type="button">
-          Definir como visualizador padrão do Windows
-        </button>
+        <button id="set-default" class="link-button" type="button" data-i18n="app.empty.setDefault"></button>
       </p>
     </section>
 
-    <div id="galeria" class="gallery" aria-label="Fotos" hidden></div>
+    <div id="galeria" class="gallery" data-i18n-aria-label="app.gallery.ariaLabel" hidden></div>
   </main>
 
   <div id="drop-overlay" class="drop-overlay" hidden>
     <div class="drop-card">
-      <strong>Solte para abrir</strong>
-      <span>Pastas ou arquivos de imagem</span>
+      <strong data-i18n="app.drop.title"></strong>
+      <span data-i18n="app.drop.subtitle"></span>
     </div>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
+  <script src="vendor/i18next.min.js"></script>
+  <script src="i18n.js"></script>
   <script src="vendor/viewer.min.js"></script>
   <script src="vendor/viewerjs-gphotos.js"></script>
   <script src="renderer.js"></script>

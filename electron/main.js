@@ -15,6 +15,16 @@ const fsp = fs.promises;
 const path = require('node:path');
 const { Readable } = require('node:stream');
 const { configureDefaultAppsRuntime } = require('./associations');
+const {
+  initI18n,
+  t,
+  getLocale,
+  setLocale,
+  getBootstrap,
+  getLanguages,
+  getMenuLabel,
+  normalizeLocale,
+} = require('./i18n');
 
 const SCHEME = 'viewer';
 const HOST = 'local';
@@ -50,8 +60,6 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
 };
-
-const collator = new Intl.Collator('pt-BR', { numeric: true, sensitivity: 'base' });
 
 // A página e as imagens precisam compartilhar a mesma origem para o canvas do
 // tema (contraste automático dos ícones) não ser bloqueado.
@@ -90,19 +98,17 @@ function readSettings() {
 }
 
 function saveSettings() {
-  if (!mainWindow || mainWindow.isDestroyed()) {
-    return;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    const bounds = mainWindow.getNormalBounds();
+
+    settings.window = {
+      width: bounds.width,
+      height: bounds.height,
+      x: bounds.x,
+      y: bounds.y,
+      maximized: mainWindow.isMaximized(),
+    };
   }
-
-  const bounds = mainWindow.getNormalBounds();
-
-  settings.window = {
-    width: bounds.width,
-    height: bounds.height,
-    x: bounds.x,
-    y: bounds.y,
-    maximized: mainWindow.isMaximized(),
-  };
 
   try {
     fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
@@ -171,10 +177,10 @@ async function checkFirstLaunch() {
 
   const result = await dialog.showMessageBox(mainWindow, {
     type: 'question',
-    title: 'Definir como visualizador padrão?',
-    message: 'Deseja definir o Visualizador de Fotos como o aplicativo padrão para abrir imagens no Windows?',
-    detail: 'Isso fará com que suas fotos abram automaticamente neste visualizador ao clicar duas vezes nelas no Explorador de Arquivos.',
-    buttons: ['Sim, definir como padrão', 'Não, obrigado'],
+    title: t('dialog.firstLaunch.title'),
+    message: t('dialog.firstLaunch.message'),
+    detail: t('dialog.firstLaunch.detail'),
+    buttons: [t('dialog.firstLaunch.yes'), t('dialog.firstLaunch.no')],
     defaultId: 0,
     cancelId: 1,
     noLink: true,
@@ -217,11 +223,11 @@ async function serveFile(filePath) {
   try {
     stat = await fsp.stat(filePath);
   } catch {
-    return textResponse('Arquivo não encontrado.', 404);
+    return textResponse(t('errors.fileNotFound'), 404);
   }
 
   if (!stat.isFile()) {
-    return textResponse('Arquivo não encontrado.', 404);
+    return textResponse(t('errors.fileNotFound'), 404);
   }
 
   const stream = fs.createReadStream(filePath);
@@ -242,7 +248,7 @@ async function serveThumbnail(filePath) {
   try {
     stat = await fsp.stat(filePath);
   } catch {
-    return textResponse('Arquivo não encontrado.', 404);
+    return textResponse(t('errors.fileNotFound'), 404);
   }
 
   const cacheKey = `${filePath}|${stat.mtimeMs}|${stat.size}`;
@@ -310,6 +316,10 @@ function imageRecord(filePath) {
 async function listFolder(folderPath) {
   const folder = path.resolve(folderPath);
   const entries = await fsp.readdir(folder, { withFileTypes: true });
+  const collator = new Intl.Collator(getLocale(), {
+    numeric: true,
+    sensitivity: 'base',
+  });
   const names = entries
     .filter((entry) => entry.isFile() && isImageFile(entry.name))
     .map((entry) => entry.name)
@@ -324,6 +334,7 @@ async function listFolder(folderPath) {
     folder,
     images: files.map(imageRecord),
     truncated,
+    maxImages: MAX_IMAGES,
   };
 }
 
@@ -381,7 +392,7 @@ async function loadPaths(inputPaths) {
 
   if (!folder) {
     sourceName = images.length > 1
-      ? 'Seleção de fotos'
+      ? t('app.status.selection')
       : (images[0] ? images[0].name : '');
   }
 
@@ -389,7 +400,15 @@ async function loadPaths(inputPaths) {
   // diretamente no visualizador, em vez de mostrar a galeria de miniaturas.
   const openedFiles = hasFile && !folder;
 
-  return { source, sourceName, folder, images, truncated, openedFiles };
+  return {
+    source,
+    sourceName,
+    folder,
+    images,
+    truncated,
+    maxImages: MAX_IMAGES,
+    openedFiles,
+  };
 }
 
 function pathsFromArgv(argv) {
@@ -424,7 +443,7 @@ function guard(task) {
       error:
         error && error.message
           ? error.message
-          : 'Não foi possível concluir a operação.',
+          : t('errors.operationFailed'),
     }));
 }
 
@@ -442,8 +461,8 @@ function sendImages(payload) {
 
 async function pickFolder() {
   const result = await dialog.showOpenDialog(mainWindow, {
-    title: 'Abrir pasta de fotos',
-    buttonLabel: 'Abrir pasta',
+    title: t('dialog.openFolder.title'),
+    buttonLabel: t('dialog.openFolder.button'),
     defaultPath: app.getPath('pictures'),
     properties: ['openDirectory'],
   });
@@ -457,13 +476,13 @@ async function pickFolder() {
 
 async function pickFiles() {
   const result = await dialog.showOpenDialog(mainWindow, {
-    title: 'Abrir fotos',
-    buttonLabel: 'Abrir',
+    title: t('dialog.openPhotos.title'),
+    buttonLabel: t('dialog.openPhotos.button'),
     defaultPath: app.getPath('pictures'),
     properties: ['openFile', 'multiSelections'],
     filters: [
       {
-        name: 'Imagens',
+        name: t('dialog.openPhotos.filter'),
         extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'avif', 'svg'],
       },
     ],
@@ -478,7 +497,7 @@ async function pickFiles() {
   if (!payload.images.length) {
     return {
       ...payload,
-      error: 'Nenhuma imagem encontrada na seleção.',
+      error: t('errors.noImagesInSelection'),
     };
   }
 
@@ -491,10 +510,9 @@ async function configureDefaultApps() {
   if (!result.ok) {
     await dialog.showMessageBox(mainWindow, {
       type: 'info',
-      title: 'Versão instalada',
-      message: 'Disponível na versão instalada do aplicativo.',
-      detail:
-        'Execute o Visualizador de Fotos a partir do instalador (.msi) para registrar as associações de arquivos.',
+      title: t('dialog.notInstalled.title'),
+      message: t('dialog.notInstalled.message'),
+      detail: t('dialog.notInstalled.detail'),
       buttons: ['OK'],
       noLink: true,
     });
@@ -509,13 +527,31 @@ async function configureDefaultApps() {
   return result;
 }
 
+async function applyLocale(locale) {
+  if (!(await setLocale(locale))) {
+    return false;
+  }
+
+  settings.locale = getLocale();
+  saveSettings();
+  buildMenu();
+
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('locale:changed', settings.locale);
+  }
+
+  return true;
+}
+
 function buildMenu() {
+  const locale = getLocale();
+
   const template = [
     {
-      label: 'Arquivo',
+      label: t('menu.file'),
       submenu: [
         {
-          label: 'Abrir pasta…',
+          label: t('menu.openFolder'),
           accelerator: 'CmdOrCtrl+O',
           click: () => {
             guard(pickFolder).then((payload) => {
@@ -526,7 +562,7 @@ function buildMenu() {
           },
         },
         {
-          label: 'Abrir fotos…',
+          label: t('menu.openPhotos'),
           accelerator: 'CmdOrCtrl+Shift+O',
           click: () => {
             guard(pickFiles).then((payload) => {
@@ -538,22 +574,22 @@ function buildMenu() {
         },
         { type: 'separator' },
         {
-          label: 'Definir como visualizador padrão...',
+          label: t('menu.setDefault'),
           click: () => {
             configureDefaultApps().catch((error) => {
-              console.error('Falha ao configurar o visualizador padrão:', error);
+              console.error(t('errors.operationFailed'), error);
             });
           },
         },
         { type: 'separator' },
-        { label: 'Sair', accelerator: 'Alt+F4', role: 'quit' },
+        { label: t('menu.quit'), accelerator: 'Alt+F4', role: 'quit' },
       ],
     },
     {
-      label: 'Visualizar',
+      label: t('menu.view'),
       submenu: [
         {
-          label: 'Tela cheia',
+          label: t('menu.fullscreen'),
           accelerator: 'F11',
           click: () => {
             if (mainWindow) {
@@ -562,7 +598,7 @@ function buildMenu() {
           },
         },
         {
-          label: 'Recarregar',
+          label: t('menu.reload'),
           accelerator: 'CmdOrCtrl+R',
           click: () => {
             if (mainWindow) {
@@ -572,7 +608,7 @@ function buildMenu() {
         },
         { type: 'separator' },
         {
-          label: 'Ferramentas do desenvolvedor',
+          label: t('menu.devtools'),
           accelerator: 'F12',
           click: () => {
             if (mainWindow) {
@@ -583,23 +619,34 @@ function buildMenu() {
       ],
     },
     {
-      label: 'Ajuda',
+      // Rótulo multilíngue fixo: o usuário precisa reconhecer a opção em
+      // qualquer um dos idiomas suportados.
+      label: getMenuLabel(),
+      submenu: getLanguages().map((language) => ({
+        label: language.label,
+        type: 'radio',
+        checked: locale === language.code,
+        click: () => {
+          applyLocale(language.code).catch((error) => {
+            console.error(t('errors.operationFailed'), error);
+          });
+        },
+      })),
+    },
+    {
+      label: t('menu.help'),
       submenu: [
         {
-          label: 'Sobre o Visualizador de Fotos',
+          label: t('menu.about'),
           click: () => {
             dialog.showMessageBox(mainWindow, {
               type: 'info',
-              title: 'Sobre',
-              message: 'Visualizador de Fotos',
+              title: t('dialog.about.title'),
+              message: t('app.name'),
               detail: [
-                `Versão ${app.getVersion()}`,
+                t('dialog.about.version', { version: app.getVersion() }),
                 '',
-                'Visualizador local de fotos com interface em tela cheia.',
-                'Abre pastas ou arquivos de imagem e permite navegar, ampliar,',
-                'girar e espelhar sem enviar nada para a internet.',
-                '',
-                'Interface baseada no ViewerJS (MIT) de Chen Fengyuan.',
+                t('dialog.about.detail'),
               ].join('\n'),
               buttons: ['OK'],
               noLink: true,
@@ -677,11 +724,11 @@ async function handleProtocol(request) {
   try {
     url = new URL(request.url);
   } catch {
-    return textResponse('Requisição inválida.', 400);
+    return textResponse(t('errors.invalidRequest'), 400);
   }
 
   if (url.host !== HOST) {
-    return textResponse('Não encontrado.', 404);
+    return textResponse(t('errors.notFound'), 404);
   }
 
   let pathname;
@@ -689,7 +736,7 @@ async function handleProtocol(request) {
   try {
     pathname = decodeURIComponent(url.pathname);
   } catch {
-    return textResponse('Requisição inválida.', 400);
+    return textResponse(t('errors.invalidRequest'), 400);
   }
 
   if (!pathname || pathname === '/') {
@@ -700,13 +747,13 @@ async function handleProtocol(request) {
     const filePath = path.normalize(pathname.slice('/img/'.length));
 
     if (!allowedImages.has(filePath)) {
-      return textResponse('Não encontrado.', 404);
+      return textResponse(t('errors.notFound'), 404);
     }
 
     try {
       return await serveFile(filePath);
     } catch {
-      return textResponse('Não encontrado.', 404);
+      return textResponse(t('errors.notFound'), 404);
     }
   }
 
@@ -714,13 +761,13 @@ async function handleProtocol(request) {
     const filePath = path.normalize(pathname.slice('/thumb/'.length));
 
     if (!allowedImages.has(filePath)) {
-      return textResponse('Não encontrado.', 404);
+      return textResponse(t('errors.notFound'), 404);
     }
 
     try {
       return await serveThumbnail(filePath);
     } catch {
-      return textResponse('Não encontrado.', 404);
+      return textResponse(t('errors.notFound'), 404);
     }
   }
 
@@ -728,13 +775,13 @@ async function handleProtocol(request) {
   const target = path.resolve(appRoot, `.${pathname}`);
 
   if (target !== appRoot && !target.startsWith(appRoot + path.sep)) {
-    return textResponse('Acesso negado.', 403);
+    return textResponse(t('errors.accessDenied'), 403);
   }
 
   try {
     return await serveFile(target);
   } catch {
-    return textResponse('Não encontrado.', 404);
+    return textResponse(t('errors.notFound'), 404);
   }
 }
 
@@ -751,7 +798,7 @@ ipcMain.handle('default-apps:configure', () => guard(configureDefaultApps));
 ipcMain.handle('paths:load', (event, inputPaths) =>
   guard(async () => {
     if (!Array.isArray(inputPaths) || !inputPaths.length) {
-      return { error: 'Nenhum arquivo recebido.' };
+      return { error: t('errors.noFile') };
     }
 
     const clean = inputPaths.filter(
@@ -760,7 +807,7 @@ ipcMain.handle('paths:load', (event, inputPaths) =>
     const payload = await loadPaths(clean);
 
     if (!payload.images.length) {
-      return { ...payload, error: 'Nenhuma imagem encontrada.' };
+      return { ...payload, error: t('errors.noImages') };
     }
 
     return payload;
@@ -776,7 +823,8 @@ ipcMain.handle('app:initial', () =>
 
     if (useDefaultFolder && payload.sourceName) {
       // O Explorer exibe a pasta como "Imagens" em português.
-      payload.sourceName = 'Imagens';
+      payload.sourceName = t('app.status.pictures');
+      payload.defaultFolder = true;
     }
 
     if (!payload.images.length && !payload.sourceName) {
@@ -786,6 +834,14 @@ ipcMain.handle('app:initial', () =>
     return payload;
   })
 );
+
+// O renderer precisa do catálogo antes da primeira pintura; sendSync evita
+// um "flash" de textos sem tradução na abertura.
+ipcMain.on('i18n:bootstrap', (event) => {
+  event.returnValue = getBootstrap();
+});
+
+ipcMain.handle('i18n:set', (event, locale) => applyLocale(locale));
 
 // ---------------------------------------------------------------------------
 // Ciclo de vida
@@ -818,9 +874,18 @@ if (!gotTheLock) {
     }
   });
 
-  app.whenReady().then(() => {
+  app.whenReady().then(async () => {
     nativeTheme.themeSource = 'dark';
     readSettings();
+
+    const initialLocale = await initI18n(settings.locale);
+
+    // Primeira abertura (ou idioma do instalador): persiste a escolha
+    // detectada para as próximas execuções.
+    if (normalizeLocale(settings.locale) !== initialLocale) {
+      settings.locale = initialLocale;
+      saveSettings();
+    }
 
     protocol.handle(SCHEME, handleProtocol);
 

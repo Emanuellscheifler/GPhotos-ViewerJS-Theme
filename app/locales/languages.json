@@ -1,0 +1,33 @@
+{
+  "default": "pt-BR",
+  "menuLabel": "Idioma / Language / Idioma / Язык",
+  "installerTitle": "Idioma / Language / Idioma / Язык",
+  "installerDescription": "Escolha o idioma do aplicativo. / Choose the application language. / Elija el idioma de la aplicación. / Выберите язык приложения.",
+  "automaticLabel": "Automático (idioma do Windows) / Automatic (Windows language) / Automático (idioma de Windows) / Автоматически (язык Windows)",
+  "languages": [
+    {
+      "code": "pt-BR",
+      "label": "Português",
+      "englishName": "Portuguese (Brazil)",
+      "lcids": [1046, 2070]
+    },
+    {
+      "code": "en",
+      "label": "English",
+      "englishName": "English",
+      "lcids": [1033, 2057, 3081, 4105, 5129, 6153, 7177, 13321, 15369, 16393, 17417, 18441]
+    },
+    {
+      "code": "es",
+      "label": "Español",
+      "englishName": "Spanish",
+      "lcids": [3082, 1034, 2058, 4106, 5130, 6154, 7178, 8202, 9226, 10250, 12298, 13322, 14346, 16394, 21514]
+    },
+    {
+      "code": "ru",
+      "label": "Русский",
+      "englishName": "Russian",
+      "lcids": [1049]
+    }
+  ]
+}

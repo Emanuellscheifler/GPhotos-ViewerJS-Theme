@@ -1,0 +1,95 @@
+{
+  "app": {
+    "name": "Photo Viewer",
+    "windowTitle": "{{label}} — Photo Viewer",
+    "initError": "Failed to initialize the application interface.",
+    "buttons": {
+      "openFolder": "Open folder",
+      "openPhotos": "Open photos"
+    },
+    "status": {
+      "noFolder": "No folder open",
+      "pictures": "Pictures",
+      "selection": "Photo selection",
+      "summary": "{{label}} · {{photos}}{{limit}}",
+      "photos_one": "{{count}} photo",
+      "photos_other": "{{count}} photos",
+      "limit": " · limit of {{max}}",
+      "noPhotos": "{{label}} · no photos",
+      "emptyFolder": "No images found in this folder."
+    },
+    "empty": {
+      "title": "Open a folder with your photos",
+      "copy": "Choose a folder or select individual photos. Click any image to open the full-screen viewer.",
+      "hint": "You can also drag a folder or images into this window.",
+      "formats": "Formats: JPG, PNG, GIF, WEBP, BMP, AVIF and SVG.",
+      "setDefault": "Set as the default Windows photo viewer"
+    },
+    "drop": {
+      "title": "Drop to open",
+      "subtitle": "Folders or image files"
+    },
+    "gallery": {
+      "ariaLabel": "Photos",
+      "broken": "Image unavailable"
+    },
+    "toast": {
+      "defaultAppsOpened": "On the Default apps screen, choose \"Photo Viewer\" and set it as default.",
+      "openError": "Could not open: {{message}}",
+      "settingsError": "Could not open settings: {{message}}",
+      "notPackaged": "Available in the installed version of the application.",
+      "noPath": "Could not get the path of the dropped files."
+    }
+  },
+  "menu": {
+    "file": "File",
+    "openFolder": "Open folder…",
+    "openPhotos": "Open photos…",
+    "setDefault": "Set as default photo viewer...",
+    "quit": "Quit",
+    "view": "View",
+    "fullscreen": "Full screen",
+    "reload": "Reload",
+    "devtools": "Developer tools",
+    "help": "Help",
+    "about": "About Photo Viewer"
+  },
+  "dialog": {
+    "firstLaunch": {
+      "title": "Set as default photo viewer?",
+      "message": "Do you want to set Photo Viewer as the default app for opening images in Windows?",
+      "detail": "Your photos will open in this viewer automatically when you double-click them in File Explorer.",
+      "yes": "Yes, set as default",
+      "no": "No, thanks"
+    },
+    "about": {
+      "title": "About",
+      "version": "Version {{version}}",
+      "detail": "Local photo viewer with a full-screen interface.\nOpens folders or image files and lets you navigate, zoom,\nrotate and flip without sending anything to the internet.\n\nInterface based on ViewerJS (MIT) by Chen Fengyuan."
+    },
+    "notInstalled": {
+      "title": "Installed version",
+      "message": "Available in the installed version of the application.",
+      "detail": "Run Photo Viewer from the installer (.msi) to register file associations."
+    },
+    "openFolder": {
+      "title": "Open photo folder",
+      "button": "Open folder"
+    },
+    "openPhotos": {
+      "title": "Open photos",
+      "button": "Open",
+      "filter": "Images"
+    }
+  },
+  "errors": {
+    "noImages": "No images found.",
+    "noImagesInSelection": "No images found in the selection.",
+    "noFile": "No files received.",
+    "operationFailed": "The operation could not be completed.",
+    "fileNotFound": "File not found.",
+    "invalidRequest": "Invalid request.",
+    "notFound": "Not found.",
+    "accessDenied": "Access denied."
+  }
+}
