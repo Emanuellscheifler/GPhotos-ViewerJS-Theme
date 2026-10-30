@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>ViewerJS · tema visualizador de fotos</title>
+
+  <!-- 1) CSS original do ViewerJS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/viewerjs@1.15.2/dist/viewer.min.css">
+
+  <!-- 2) Tema (sempre depois do CSS do ViewerJS) -->
+  <link rel="stylesheet" href="viewerjs-gphotos.css">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --page-bg: #0d0f11;
+      --surface: #1a1d20;
+      --text: #e8eaed;
+      --muted: #9aa0a6;
+      --focus: #8ab4f8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--page-bg);
+      color: var(--text);
+      font-family: "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px 32px;
+      padding: 28px clamp(16px, 4vw, 40px) 20px;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .modes {
+      display: inline-flex;
+      padding: 3px;
+      background-color: #202428;
+      border-radius: 999px;
+    }
+
+    .modes button {
+      appearance: none;
+      padding: 7px 14px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .modes button:hover {
+      color: var(--text);
+    }
+
+    .modes button.is-active {
+      background-color: #3c4043;
+      color: #fff;
+    }
+
+    .modes button:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      grid-auto-rows: 170px;
+      grid-auto-flow: dense;
+      gap: 6px;
+      padding: 0 clamp(16px, 4vw, 40px) 48px;
+    }
+
+    .tile {
+      position: relative;
+      margin: 0;
+      overflow: hidden;
+      background-color: var(--surface);
+      border-radius: 8px;
+      cursor: zoom-in;
+    }
+
+    .tile img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .tile:hover img {
+      transform: scale(1.03);
+      filter: brightness(0.85);
+    }
+
+    .tile.tall {
+      grid-row: span 2;
+    }
+
+    .tile.wide {
+      grid-column: span 2;
+    }
+
+    footer {
+      padding: 0 clamp(16px, 4vw, 40px) 36px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    kbd {
+      padding: 1px 5px;
+      border: 1px solid #3c4043;
+      border-radius: 4px;
+      background-color: #202428;
+      font-family: inherit;
+      font-size: 11px;
+    }
+
+    @media (max-width: 520px) {
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        grid-auto-rows: 140px;
+      }
+
+      .tile.wide {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Galeria de demonstração</h1>
+      <p>Clique em uma foto para abrir o visualizador. Use <kbd>←</kbd> <kbd>→</kbd> para navegar e <kbd>Esc</kbd> para fechar.</p>
+    </div>
+
+    <div class="modes" role="group" aria-label="Variações do tema">
+      <button type="button" data-mode="padrao" class="is-active">Padrão</button>
+      <button type="button" data-mode="miniaturas">Com miniaturas</button>
+      <button type="button" data-mode="sem-titulo">Sem título</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="galeria" class="gallery">
+      <figure class="tile wide">
+        <img src="images/foto-1.jpg" alt="Foto de demonstração 1 (paisagem)">
+      </figure>
+      <figure class="tile tall">
+        <img src="images/foto-2.jpg" alt="Foto de demonstração 2 (retrato)">
+      </figure>
+      <figure class="tile">
+        <img src="images/foto-3.jpg" alt="Foto de demonstração 3 (paisagem)">
+      </figure>
+      <figure class="tile tall">
+        <img src="images/foto-4.jpg" alt="Foto de demonstração 4 (retrato)">
+      </figure>
+      <figure class="tile">
+        <img src="images/foto-5.jpg" alt="Foto de demonstração 5 (paisagem)">
+      </figure>
+      <figure class="tile wide">
+        <img src="images/foto-6.jpg" alt="Foto de demonstração 6 (paisagem)">
+      </figure>
+      <figure class="tile">
+        <img src="images/foto-7.jpg" alt="Foto de demonstração 7 (paisagem)">
+      </figure>
+      <figure class="tile tall">
+        <img src="images/foto-8.jpg" alt="Foto de demonstração 8 (retrato)">
+      </figure>
+      <figure class="tile">
+        <img src="images/foto-9.jpg" alt="Foto de demonstração 9 (imagem pequena, 480 × 320)">
+      </figure>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      Tema de interface para ViewerJS. Nenhum recurso original é removido: zoom, rotação,
+      espelhamento, slideshow, navegação, miniaturas, tela cheia, teclado e gestos continuam ativos.
+      Os botões de modo acima recriam o visualizador com variações para comparação.
+    </p>
+  </footer>
+
+  <!-- 3) JS original do ViewerJS -->
+  <script src="https://cdn.jsdelivr.net/npm/viewerjs@1.15.2/dist/viewer.min.js"></script>
+
+  <!-- 4) Helper de configuração do tema -->
+  <script src="viewerjs-gphotos.js"></script>
+
+  <script>
+    (function () {
+      var gallery = document.getElementById('galeria');
+      var viewer = null;
+      var mode = 'padrao';
+
+      function create() {
+        if (viewer) {
+          viewer.destroy();
+          viewer = null;
+        }
+
+        var options = {};
+
+        if (mode === 'miniaturas') {
+          options.navbar = true;
+        }
+
+        if (mode === 'sem-titulo') {
+          options.title = false;
+        }
+
+        viewer = window.createGPhotosViewer(gallery, options);
+      }
+
+      document.querySelectorAll('[data-mode]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          mode = button.getAttribute('data-mode');
+
+          document.querySelectorAll('[data-mode]').forEach(function (candidate) {
+            candidate.classList.toggle('is-active', candidate === button);
+          });
+
+          create();
+        });
+      });
+
+      create();
+
+      // Abre direto no primeiro retrato com demo.html?auto=1 (útil para conferir o tema).
+      if (/[?&]auto(?:[=&]|$)/.test(window.location.search)) {
+        viewer.view(1);
+      }
+    })();
+  </script>
+</body>
+</html>

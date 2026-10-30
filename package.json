@@ -1,0 +1,74 @@
+{
+  "name": "visualizador-de-fotos",
+  "productName": "Visualizador de Fotos",
+  "version": "1.0.1",
+  "description": "Visualizador de fotos local com interface no estilo visualizador em tela cheia.",
+  "author": "Emanuellscheifler",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Emanuellscheifler/GPhotos-ViewerJS-Theme.git"
+  },
+  "homepage": "https://github.com/Emanuellscheifler/GPhotos-ViewerJS-Theme#readme",
+  "bugs": {
+    "url": "https://github.com/Emanuellscheifler/GPhotos-ViewerJS-Theme/issues"
+  },
+  "keywords": [
+    "electron",
+    "photo-viewer",
+    "viewerjs",
+    "windows",
+    "msi",
+    "desktop-app"
+  ],
+  "main": "electron/main.js",
+  "scripts": {
+    "sync-theme": "node scripts/sync-theme.js",
+    "start": "npm run sync-theme && electron .",
+    "dist": "npm run sync-theme && electron-builder --win msi",
+    "dist:dir": "npm run sync-theme && electron-builder --win dir"
+  },
+  "devDependencies": {
+    "electron": "45.1.0",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "br.com.visualizadordefotos.app",
+    "productName": "Visualizador de Fotos",
+    "copyright": "Copyright © 2026 Emanuellscheifler",
+    "asar": false,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "app/**/*",
+      "build/icon.ico",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "msi",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "Visualizador-de-Fotos-${version}-${arch}.${ext}"
+    },
+    "msi": {
+      "oneClick": false,
+      "perMachine": false,
+      "upgradeCode": "{7C4A2E91-5B3D-4F86-9E21-8A6D3F0C5B17}",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Visualizador de Fotos",
+      "runAfterFinish": true,
+      "warningsAsErrors": true
+    }
+  }
+}

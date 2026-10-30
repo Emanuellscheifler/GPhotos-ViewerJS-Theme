@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none';"
+  >
+  <title>Visualizador de Fotos</title>
+  <link rel="stylesheet" href="vendor/viewer.min.css">
+  <link rel="stylesheet" href="vendor/viewerjs-gphotos.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="appbar">
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+          <circle cx="8.5" cy="8.5" r="1.6" fill="currentColor" stroke="none"></circle>
+          <path d="m21 15-4.6-4.6a2 2 0 0 0-2.8 0L4 20"></path>
+        </svg>
+      </span>
+      <div class="brand-text">
+        <h1>Visualizador de Fotos</h1>
+        <p class="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="status-text">Nenhuma pasta aberta</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="open-folder" class="btn btn-primary" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path>
+        </svg>
+        Abrir pasta
+      </button>
+      <button id="open-files" class="btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <path d="m21 15-4.6-4.6a2 2 0 0 0-2.8 0L4 20"></path>
+        </svg>
+        Abrir fotos
+      </button>
+    </div>
+  </header>
+
+  <main class="content">
+    <section id="empty" class="empty">
+      <div class="empty-art" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2.5" y="4" width="19" height="16" rx="3"></rect>
+          <circle cx="8" cy="9.5" r="1.8"></circle>
+          <path d="m21.5 15.5-5-5a2 2 0 0 0-2.8 0L4 20"></path>
+        </svg>
+      </div>
+      <h2>Abra uma pasta com suas fotos</h2>
+      <p class="empty-copy">
+        Escolha uma pasta ou selecione fotos soltas. Clique em qualquer imagem para abrir
+        o visualizador em tela cheia.
+      </p>
+      <div class="empty-actions">
+        <button id="empty-open-folder" class="btn btn-primary" type="button">Abrir pasta</button>
+        <button id="empty-open-files" class="btn" type="button">Abrir fotos</button>
+      </div>
+      <p class="empty-hint">
+        Você também pode arrastar uma pasta ou imagens para esta janela.<br>
+        Formatos: JPG, PNG, GIF, WEBP, BMP, AVIF e SVG.
+      </p>
+    </section>
+
+    <div id="galeria" class="gallery" aria-label="Fotos" hidden></div>
+  </main>
+
+  <div id="drop-overlay" class="drop-overlay" hidden>
+    <div class="drop-card">
+      <strong>Solte para abrir</strong>
+      <span>Pastas ou arquivos de imagem</span>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="vendor/viewer.min.js"></script>
+  <script src="vendor/viewerjs-gphotos.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

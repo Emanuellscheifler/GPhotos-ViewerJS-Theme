@@ -1,0 +1,19 @@
+# Dependências e artefatos de build
+node_modules/
+dist/
+*.log
+
+# Certificados, chaves e segredos (nunca comitar)
+*.pfx
+*.p12
+*.pem
+*.key
+.env
+.env.*
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

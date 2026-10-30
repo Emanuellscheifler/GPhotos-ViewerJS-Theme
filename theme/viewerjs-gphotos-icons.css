@@ -1,0 +1,64 @@
+/*!
+ * viewerjs-gphotos-icons.css
+ * Variante do tema para sites com CSP que bloqueiam data: URIs.
+ * Carregue este arquivo DEPOIS de viewerjs-gphotos.css e mantenha a pasta
+ * icons/ ao lado deste CSS.
+ *
+ * Licença: MIT.
+ */
+
+.viewer-container .viewer-zoom-in {
+  --vjs-icon-svg: url("icons/zoom-in.svg");
+}
+
+.viewer-container .viewer-zoom-out {
+  --vjs-icon-svg: url("icons/zoom-out.svg");
+}
+
+.viewer-container .viewer-one-to-one {
+  --vjs-icon-svg: url("icons/one-to-one.svg");
+}
+
+.viewer-container .viewer-reset {
+  --vjs-icon-svg: url("icons/reset.svg");
+}
+
+.viewer-container .viewer-prev {
+  --vjs-icon-svg: url("icons/prev.svg");
+}
+
+.viewer-container .viewer-next {
+  --vjs-icon-svg: url("icons/next.svg");
+}
+
+.viewer-container .viewer-rotate-left {
+  --vjs-icon-svg: url("icons/rotate-left.svg");
+}
+
+.viewer-container .viewer-rotate-right {
+  --vjs-icon-svg: url("icons/rotate-right.svg");
+}
+
+.viewer-container .viewer-flip-horizontal {
+  --vjs-icon-svg: url("icons/flip-horizontal.svg");
+}
+
+.viewer-container .viewer-flip-vertical {
+  --vjs-icon-svg: url("icons/flip-vertical.svg");
+}
+
+.viewer-container .viewer-play {
+  --vjs-icon-svg: url("icons/play.svg");
+}
+
+.viewer-container .viewer-close {
+  --vjs-icon-svg: url("icons/close.svg");
+}
+
+.viewer-container .viewer-fullscreen {
+  --vjs-icon-svg: url("icons/fullscreen.svg");
+}
+
+.viewer-container .viewer-fullscreen-exit {
+  --vjs-icon-svg: url("icons/fullscreen-exit.svg");
+}

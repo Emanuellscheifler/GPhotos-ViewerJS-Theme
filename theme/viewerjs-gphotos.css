@@ -1,0 +1,542 @@
+/*!
+ * viewerjs-gphotos.css
+ * Tema de interface para o ViewerJS inspirado em visualizadores de fotos
+ * em tela cheia (fundo preto, controles flutuantes e discretos).
+ *
+ * Uso: carregue este arquivo DEPOIS de viewer.css (CDN ou dist/).
+ * Não altera o JavaScript do ViewerJS: todos os recursos originais
+ * (zoom, rotação, espelhamento, slideshow, navegação, miniaturas,
+ * fullscreen, teclado, swipe) continuam funcionando.
+ *
+ * Licença: MIT. Não contém ícones, textos ou assets do Google Fotos.
+ */
+
+/* ==========================================================================
+   1. Variáveis do tema
+   ========================================================================== */
+
+.viewer-container {
+  --vjs-bg: #000;
+  --vjs-icon: #e8eaed;
+  --vjs-icon-hover: #fff;
+  --vjs-hover-bg: rgba(255, 255, 255, 0.1);
+  --vjs-active-bg: rgba(255, 255, 255, 0.16);
+  --vjs-focus: #8ab4f8;
+
+  /* Área de clique e tamanho do ícone da barra superior */
+  --vjs-hit: 40px;
+  --vjs-icon-size: 20px;
+  --vjs-inset: 10px;
+  --vjs-gap: 2px;
+
+  /* Setas laterais */
+  --vjs-nav-size: 48px;
+  --vjs-nav-inset: 16px;
+
+  /* Textos */
+  --vjs-title-color: #e8eaed;
+  --vjs-title-size: 13px;
+  --vjs-title-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+
+  background-color: var(--vjs-bg);
+  color: var(--vjs-icon);
+  font-family: "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Fundo opaco: a página atrás do visualizador não aparece. */
+.viewer-container.viewer-backdrop {
+  background-color: var(--vjs-bg);
+}
+
+/* ==========================================================================
+   2. Imagem
+   O ViewerJS limita a imagem a 90% da largura e aplica margens próprias.
+   Removemos apenas o limite horizontal, preservando as margens inline
+   (margin-left/top) que o JavaScript usa para posicionar e arrastar.
+   ========================================================================== */
+
+.viewer-container .viewer-canvas > img {
+  max-width: 100% !important;
+  margin-right: 0;
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   3. Barra de ferramentas (topo direito, flutuante)
+   Truque: altura zero no contêiner para o ViewerJS calcular a área da
+   imagem sem descontar a barra (ele usa offsetTop + offsetHeight), e a
+   lista de botões é posicionada de forma absoluta por cima da imagem.
+   ========================================================================== */
+
+.viewer-container .viewer-toolbar {
+  font-size: 0;
+  line-height: 0;
+}
+
+.viewer-container .viewer-toolbar-top {
+  top: 0;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  text-align: right;
+  pointer-events: none;
+}
+
+.viewer-container .viewer-toolbar-top > ul {
+  position: absolute;
+  top: var(--vjs-inset);
+  right: var(--vjs-inset);
+  display: flex;
+  align-items: center;
+  gap: var(--vjs-gap);
+  max-width: calc(
+    100% - var(--vjs-inset) - var(--vjs-hit) - 16px - var(--vjs-inset)
+  );
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: transparent;
+  border-radius: 999px;
+  pointer-events: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.viewer-container .viewer-toolbar-top > ul::-webkit-scrollbar {
+  display: none;
+}
+
+/* Quando a fileira não cabe na tela (celulares), a borda direita esmaece
+   para indicar que há mais botões para rolar. */
+.viewer-container.vjs-toolbar-scroll .viewer-toolbar-top > ul {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 20px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 20px),
+    transparent 100%
+  );
+}
+
+/* Botões da barra: sem círculo de fundo, só o realce no hover. */
+.viewer-container .viewer-toolbar > ul > li {
+  float: none;
+  flex: 0 0 auto;
+  width: var(--vjs-hit);
+  height: var(--vjs-hit);
+  margin: 0;
+  overflow: hidden;
+  background-color: transparent;
+  border-radius: 50%;
+  color: var(--vjs-icon);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.viewer-container .viewer-toolbar > ul > li:hover {
+  background-color: var(--vjs-hover-bg);
+  color: var(--vjs-icon-hover);
+}
+
+.viewer-container .viewer-toolbar > ul > li:active {
+  background-color: var(--vjs-active-bg);
+}
+
+/* O ViewerJS aplica tamanhos extras ao botão play; normalizamos. */
+.viewer-container .viewer-toolbar > ul > li.viewer-small,
+.viewer-container .viewer-toolbar > ul > li.viewer-large {
+  width: var(--vjs-hit);
+  height: var(--vjs-hit);
+  margin: 0;
+}
+
+/* Espaçamento entre botões agora é feito por gap, não por margem. */
+.viewer-container .viewer-toolbar > ul > li + li {
+  margin-left: 0;
+}
+
+/* ==========================================================================
+   4. Ícones (SVG em máscara CSS)
+   A máscara usa a cor atual do botão (currentColor), então o ícone muda de
+   cor no hover/focus sem trocar de imagem. Os rótulos textuais originais
+   do ViewerJS (content: 'Zoom In', etc.) são mantidos para leitores de tela.
+   ========================================================================== */
+
+.viewer-container .viewer-toolbar > ul > li::before,
+.viewer-container .viewer-button::before,
+.viewer-container .viewer-navigation > .viewer-prev::before,
+.viewer-container .viewer-navigation > .viewer-next::before {
+  display: block;
+  width: var(--vjs-icon-size);
+  height: var(--vjs-icon-size);
+  margin: calc((var(--vjs-hit) - var(--vjs-icon-size)) / 2);
+  background-color: currentColor;
+  background-image: none;
+  background-repeat: no-repeat;
+  background-size: 0 0;
+  color: inherit; /* o sprite original define color: transparent */
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+  -webkit-mask-image: var(--vjs-icon-svg);
+  mask-image: var(--vjs-icon-svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* As setas laterais usam o tamanho maior. */
+.viewer-container .viewer-navigation > .viewer-prev::before,
+.viewer-container .viewer-navigation > .viewer-next::before {
+  margin: calc((var(--vjs-nav-size) - var(--vjs-icon-size)) / 2);
+}
+
+/* --- Ícones (traço 2px, 24x24) ------------------------------------------- */
+
+.viewer-container .viewer-zoom-in {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3Cpath d='M11 8v6'/%3E%3Cpath d='M8 11h6'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-zoom-out {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3Cpath d='M8 11h6'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-one-to-one {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 9.5 8 8v8'/%3E%3Cpath d='M15 9.5 16.5 8v8'/%3E%3Cpath d='M11.5 10h.01'/%3E%3Cpath d='M11.5 14h.01'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-reset {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 14 4 9l5-5'/%3E%3Cpath d='M4 9h10.5a5.5 5.5 0 0 1 0 11H11'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-prev {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-next {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-rotate-left {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-rotate-right {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8'/%3E%3Cpath d='M21 3v5h-5'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-flip-horizontal {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h3'/%3E%3Cpath d='M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3'/%3E%3Cpath d='M12 20v2'/%3E%3Cpath d='M12 14v2'/%3E%3Cpath d='M12 8v2'/%3E%3Cpath d='M12 2v2'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-flip-vertical {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3'/%3E%3Cpath d='M21 16v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3'/%3E%3Cpath d='M4 12H2'/%3E%3Cpath d='M10 12H8'/%3E%3Cpath d='M16 12h-2'/%3E%3Cpath d='M22 12h-2'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-play {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 4.5v15l13-7.5z'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-close {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 12H5'/%3E%3Cpath d='m12 19-7-7 7-7'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-fullscreen {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 3H5a2 2 0 0 0-2 2v3'/%3E%3Cpath d='M21 8V5a2 2 0 0 0-2-2h-3'/%3E%3Cpath d='M3 16v3a2 2 0 0 0 2 2h3'/%3E%3Cpath d='M16 21h3a2 2 0 0 0 2-2v-3'/%3E%3C/svg%3E");
+}
+
+.viewer-container .viewer-fullscreen-exit {
+  --vjs-icon-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h3a2 2 0 0 0 2-2V3'/%3E%3Cpath d='M21 16h-3a2 2 0 0 0-2 2v3'/%3E%3Cpath d='M16 3v3a2 2 0 0 0 2 2h3'/%3E%3Cpath d='M8 21v-3a2 2 0 0 0-2-2H3'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   5. Botão "voltar" (canto superior esquerdo) no modo modal
+   O ViewerJS usa o mesmo elemento como "fechar" (modal) e "tela cheia"
+   (inline). Aqui reposicionamos apenas o modo modal.
+   ========================================================================== */
+
+.viewer-container.viewer-fixed .viewer-button.viewer-close {
+  top: var(--vjs-inset);
+  right: auto;
+  bottom: auto;
+  left: var(--vjs-inset);
+  width: var(--vjs-hit);
+  height: var(--vjs-hit);
+  overflow: hidden;
+  background-color: transparent;
+  border-radius: 50%;
+  color: var(--vjs-icon);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.viewer-container.viewer-fixed .viewer-button.viewer-close::before {
+  position: static;
+  margin: calc((var(--vjs-hit) - var(--vjs-icon-size)) / 2);
+}
+
+.viewer-container.viewer-fixed .viewer-button.viewer-close:hover,
+.viewer-container.viewer-fixed .viewer-button.viewer-close:focus-visible {
+  background-color: var(--vjs-hover-bg);
+  color: var(--vjs-icon-hover);
+}
+
+/* Botão de tela cheia no modo inline: mesmo estilo plano. */
+.viewer-container:not(.viewer-fixed) .viewer-button {
+  top: var(--vjs-inset);
+  right: var(--vjs-inset);
+  bottom: auto;
+  left: auto;
+  width: var(--vjs-hit);
+  height: var(--vjs-hit);
+  background-color: transparent;
+  border-radius: 50%;
+  color: var(--vjs-icon);
+}
+
+.viewer-container:not(.viewer-fixed) .viewer-button::before {
+  position: static;
+  margin: calc((var(--vjs-hit) - var(--vjs-icon-size)) / 2);
+}
+
+.viewer-container:not(.viewer-fixed) .viewer-button:hover,
+.viewer-container:not(.viewer-fixed) .viewer-button:focus-visible {
+  background-color: var(--vjs-hover-bg);
+  color: var(--vjs-icon-hover);
+}
+
+/* Contraste automático: as classes vjs-light-toolbar e vjs-light-button são
+   aplicadas via JS quando a foto atrás de cada controle é clara. As setas
+   laterais continuam com o círculo escuro e ícone claro. */
+.viewer-container.vjs-light-toolbar .viewer-toolbar > ul > li {
+  color: #202124;
+}
+
+.viewer-container.vjs-light-toolbar .viewer-toolbar > ul > li:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: #000;
+}
+
+.viewer-container.vjs-light-toolbar .viewer-toolbar > ul > li:active {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.viewer-container.vjs-light-button.viewer-fixed .viewer-button.viewer-close {
+  color: #202124;
+}
+
+.viewer-container.vjs-light-button.viewer-fixed .viewer-button.viewer-close:hover,
+.viewer-container.vjs-light-button.viewer-fixed .viewer-button.viewer-close:focus-visible {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: #000;
+}
+
+/* ==========================================================================
+   6. Setas de navegação laterais
+   Ficam invisíveis até o mouse entrar no visualizador (ou foco por teclado).
+   Em dispositivos sem hover permanecem visíveis.
+   ========================================================================== */
+
+.viewer-container .viewer-navigation > .viewer-prev,
+.viewer-container .viewer-navigation > .viewer-next {
+  width: var(--vjs-nav-size);
+  height: var(--vjs-nav-size);
+  margin-top: calc(var(--vjs-nav-size) / -2);
+  background-color: rgba(0, 0, 0, 0.45);
+  border-radius: 50%;
+  color: var(--vjs-icon);
+  opacity: 0;
+  transition: opacity 0.2s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.viewer-container .viewer-navigation > .viewer-prev {
+  left: var(--vjs-nav-inset);
+}
+
+.viewer-container .viewer-navigation > .viewer-next {
+  right: var(--vjs-nav-inset);
+}
+
+.viewer-container:hover .viewer-navigation > .viewer-prev,
+.viewer-container:hover .viewer-navigation > .viewer-next,
+.viewer-container:focus-within .viewer-navigation > .viewer-prev,
+.viewer-container:focus-within .viewer-navigation > .viewer-next {
+  opacity: 1;
+}
+
+.viewer-container .viewer-navigation > .viewer-prev:hover,
+.viewer-container .viewer-navigation > .viewer-next:hover {
+  background-color: rgba(0, 0, 0, 0.65);
+  color: var(--vjs-icon-hover);
+}
+
+@media (hover: none) {
+  .viewer-container .viewer-navigation > .viewer-prev,
+  .viewer-container .viewer-navigation > .viewer-next {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   7. Título / legenda
+   Altura zero + deslocamento visual: o ViewerJS mede offsetTop/offsetHeight
+   para reservar espaço, então o título flutua sem reduzir a imagem.
+   ========================================================================== */
+
+.viewer-container .viewer-title {
+  bottom: 0;
+  left: 50%;
+  right: auto;
+  display: inline-block;
+  max-width: 90vw;
+  height: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  color: var(--vjs-title-color);
+  font-size: var(--vjs-title-size);
+  line-height: 20px;
+  text-align: center;
+  text-shadow: var(--vjs-title-shadow);
+  white-space: nowrap;
+  opacity: 0.85;
+  transform: translate(-50%, -28px);
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  clip-path: inset(-40px 0 -40px 0);
+}
+
+.viewer-container:hover .viewer-title {
+  opacity: 1;
+}
+
+/* Classes que o ViewerJS adiciona conforme a posição da barra não devem
+   alterar a posição do título neste tema. */
+.viewer-container .viewer-title.viewer-title-toolbar-top {
+  bottom: 0;
+}
+
+/* ==========================================================================
+   8. Tooltip de zoom
+   ========================================================================== */
+
+.viewer-container .viewer-tooltip {
+  top: auto;
+  bottom: 56px;
+  left: 50%;
+  width: auto;
+  min-width: 56px;
+  height: 32px;
+  margin: 0;
+  padding: 0 14px;
+  background-color: rgba(32, 33, 36, 0.92);
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #e8eaed;
+  font-size: 12px;
+  line-height: 32px;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+/* ==========================================================================
+   9. Miniaturas (navbar) — opcional
+   Desativadas na configuração recomendada (navbar: false). Se habilitadas,
+   ganham um estilo discreto e translúcido em vez da faixa preta opaca.
+   ========================================================================== */
+
+.viewer-container .viewer-navbar {
+  background-color: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.viewer-container .viewer-list > li {
+  opacity: 0.45;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+.viewer-container .viewer-list > li:hover {
+  opacity: 0.8;
+}
+
+.viewer-container .viewer-list > li.viewer-active,
+.viewer-container .viewer-list > li.viewer-active:hover {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--vjs-focus);
+}
+
+/* ==========================================================================
+   10. Slideshow
+   ========================================================================== */
+
+.viewer-container .viewer-player {
+  background-color: var(--vjs-bg);
+}
+
+/* ==========================================================================
+   11. Foco e acessibilidade
+   ========================================================================== */
+
+.viewer-container .viewer-toolbar > ul > li:focus,
+.viewer-container .viewer-button:focus,
+.viewer-container .viewer-navigation > .viewer-prev:focus,
+.viewer-container .viewer-navigation > .viewer-next:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.viewer-container .viewer-toolbar > ul > li:focus-visible,
+.viewer-container .viewer-button:focus-visible,
+.viewer-container .viewer-navigation > .viewer-prev:focus-visible,
+.viewer-container .viewer-navigation > .viewer-next:focus-visible {
+  outline: 2px solid var(--vjs-focus);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   12. Responsivo
+   Em telas estreitas a fileira de botões rola horizontalmente (sem barra
+   visível) em vez de quebrar linha ou esconder recursos.
+   ========================================================================== */
+
+@media (max-width: 600px) {
+  .viewer-container {
+    --vjs-inset: 6px;
+    --vjs-nav-size: 44px;
+    --vjs-nav-inset: 10px;
+    --vjs-title-size: 12px;
+  }
+
+  .viewer-container .viewer-toolbar-top > ul {
+    border-radius: 0;
+  }
+
+  .viewer-container .viewer-tooltip {
+    bottom: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewer-container .viewer-toolbar > ul > li,
+  .viewer-container .viewer-button,
+  .viewer-container .viewer-navigation > .viewer-prev,
+  .viewer-container .viewer-navigation > .viewer-next,
+  .viewer-container .viewer-title {
+    transition: none;
+  }
+}
