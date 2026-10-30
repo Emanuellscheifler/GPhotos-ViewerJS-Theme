@@ -61,14 +61,14 @@ certificado na loja, use `signtool` com o thumbprint:
 
 ```powershell
 signtool sign /sha1 <THUMBPRINT> /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "Visualizador de Fotos.exe"
-signtool sign /sha1 <THUMBPRINT> /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "Visualizador-de-Fotos-1.0.1-x64.msi"
+signtool sign /sha1 <THUMBPRINT> /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "Visualizador-de-Fotos-1.0.2-x64.msi"
 ```
 
 Verificação:
 
 ```powershell
-Get-AuthenticodeSignature "dist\Visualizador-de-Fotos-1.0.1-x64.msi"
-signtool verify /pa /v "dist\Visualizador-de-Fotos-1.0.1-x64.msi"
+Get-AuthenticodeSignature "dist\Visualizador-de-Fotos-1.0.2-x64.msi"
+signtool verify /pa /v "dist\Visualizador-de-Fotos-1.0.2-x64.msi"
 ```
 
 ## Segurança
@@ -76,3 +76,4 @@ signtool verify /pa /v "dist\Visualizador-de-Fotos-1.0.1-x64.msi"
 - Nunca comite `.pfx`, `.p12`, senhas ou tokens.
 - Use GitHub Secrets para o token do SignPath.
 - O `.gitignore` já bloqueia certificados e arquivos `.env`.
+

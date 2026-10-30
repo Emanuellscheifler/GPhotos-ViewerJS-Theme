@@ -27,6 +27,7 @@ mesmo repositório. Nenhum asset, ícone ou texto do Google Fotos é usado.
 - Zoom, 1:1, reset, rotação, espelhamento, slideshow e tela cheia.
 - Contraste automático dos ícones: ficam escuros sobre fotos claras e claros sobre fotos
   escuras.
+- Registro para aparecer em **Abrir com** e em **Aplicativos padrão** do Windows.
 - Modo offline: o ViewerJS e o tema são servidos localmente; nenhuma foto sai do
   computador.
 - Limite de 3.000 imagens por abertura e leitura do nível superior da pasta.
@@ -46,11 +47,25 @@ A assinatura de código é fornecida gratuitamente pelo
 ```bash
 npm install
 npm run dist
-# dist/Visualizador-de-Fotos-1.0.1-x64.msi
+# dist/Visualizador-de-Fotos-1.0.2-x64.msi
 ```
 
 O MSI tem cerca de 121 MB e **não é versionado no repositório** — o GitHub bloqueia
 arquivos acima de 100 MB. Instaladores vão para os Releases.
+
+## Visualizador padrão do Windows
+
+O MSI registra o aplicativo para **JPG, JPEG, PNG, GIF, WEBP, BMP e AVIF**, e o app passa
+a aparecer em **Abrir com** e em **Aplicativos padrão**. O Windows 10/11 não permite
+definir o padrão silenciosamente; a confirmação final é sempre do usuário:
+
+1. No aplicativo, abra **Arquivo → Definir como visualizador padrão...**.
+2. A tela **Aplicativos padrão** do Windows será aberta.
+3. Escolha **Visualizador de Fotos** e defina como padrão para os tipos de imagem.
+   Se necessário, use **Definir padrões por aplicativo** e selecione todas as extensões.
+
+O app apenas registra as capacidades e abre a tela; ele não altera a associação padrão
+sem a sua confirmação.
 
 ## Code signing policy
 

@@ -9,11 +9,13 @@ const {
   Menu,
   nativeImage,
   nativeTheme,
+  shell,
 } = require('electron');
 const fs = require('node:fs');
 const fsp = fs.promises;
 const path = require('node:path');
 const { Readable } = require('node:stream');
+const { registerAssociations } = require('./associations');
 
 const SCHEME = 'viewer';
 const HOST = 'local';
@@ -393,6 +395,32 @@ async function pickFiles() {
   return payload;
 }
 
+async function configureDefaultApps() {
+  const result = await registerAssociations();
+
+  if (!result.ok) {
+    await dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: 'Versão instalada',
+      message: 'Disponível na versão instalada do aplicativo.',
+      detail:
+        'Execute o Visualizador de Fotos a partir do instalador (.msi) para registrar as associações de arquivos.',
+      buttons: ['OK'],
+      noLink: true,
+    });
+
+    return result;
+  }
+
+  await shell.openExternal('ms-settings:defaultapps');
+
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('default-apps:opened');
+  }
+
+  return result;
+}
+
 function buildMenu() {
   const template = [
     {
@@ -417,6 +445,15 @@ function buildMenu() {
               if (payload && !payload.error) {
                 sendImages(payload);
               }
+            });
+          },
+        },
+        { type: 'separator' },
+        {
+          label: 'Definir como visualizador padrão...',
+          click: () => {
+            configureDefaultApps().catch((error) => {
+              console.error('Falha ao configurar o visualizador padrão:', error);
             });
           },
         },
@@ -615,6 +652,8 @@ async function handleProtocol(request) {
 ipcMain.handle('dialog:open-folder', () => guard(pickFolder));
 
 ipcMain.handle('dialog:open-files', () => guard(pickFiles));
+
+ipcMain.handle('default-apps:configure', () => guard(configureDefaultApps));
 
 ipcMain.handle('paths:load', (event, inputPaths) =>
   guard(async () => {

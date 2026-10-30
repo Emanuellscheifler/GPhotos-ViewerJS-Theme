@@ -15,6 +15,7 @@
   const statusText = document.getElementById('status-text');
   const dropOverlay = document.getElementById('drop-overlay');
   const toast = document.getElementById('toast');
+  const setDefaultButton = document.getElementById('set-default');
 
   const buttons = [
     document.getElementById('open-folder'),
@@ -313,10 +314,35 @@
     run(() => api.openFiles());
   }
 
+  async function configureDefault() {
+    try {
+      const result = await api.configureDefaultApps();
+
+      if (result && result.ok === false && result.reason === 'not-packaged') {
+        showToast('Disponível na versão instalada do aplicativo.');
+      }
+    } catch (error) {
+      showToast(
+        'Não foi possível abrir as configurações: ' +
+          (error && error.message ? error.message : String(error))
+      );
+    }
+  }
+
   document.getElementById('open-folder').addEventListener('click', openFolder);
   document.getElementById('empty-open-folder').addEventListener('click', openFolder);
   document.getElementById('open-files').addEventListener('click', openFiles);
   document.getElementById('empty-open-files').addEventListener('click', openFiles);
+
+  if (setDefaultButton) {
+    setDefaultButton.addEventListener('click', configureDefault);
+  }
+
+  api.onDefaultAppsOpened(() => {
+    showToast(
+      'Na tela de Aplicativos padrão, escolha "Visualizador de Fotos" e defina como padrão.'
+    );
+  });
 
   // O menu nativo (Abrir pasta / Abrir fotos) envia o resultado por evento.
   api.onImagesLoaded((payload) => {

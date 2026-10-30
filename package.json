@@ -1,7 +1,7 @@
 {
   "name": "visualizador-de-fotos",
   "productName": "Visualizador de Fotos",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Visualizador de fotos local com interface no estilo visualizador em tela cheia.",
   "author": "Emanuellscheifler",
   "license": "MIT",
@@ -47,6 +47,23 @@
       "app/**/*",
       "build/icon.ico",
       "package.json"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "jpg",
+          "jpeg",
+          "png",
+          "gif",
+          "webp",
+          "bmp",
+          "avif"
+        ],
+        "name": "VisualizadorDeFotos.Imagem",
+        "description": "Imagem",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      }
     ],
     "win": {
       "target": [
