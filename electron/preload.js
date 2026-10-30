@@ -2,7 +2,19 @@
 
 const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
+// Catálogo completo (4 idiomas) + idioma atual, entregue de forma síncrona
+// para o renderer traduzir a interface antes da primeira pintura.
+const i18n = ipcRenderer.sendSync('i18n:bootstrap');
+
 contextBridge.exposeInMainWorld('photoViewer', {
+  i18n,
+  setLocale: (locale) => ipcRenderer.invoke('i18n:set', locale),
+  onLocaleChanged: (callback) => {
+    const listener = (event, locale) => callback(locale);
+    ipcRenderer.on('locale:changed', listener);
+    return () => ipcRenderer.removeListener('locale:changed', listener);
+  },
+
   openFolder: () => ipcRenderer.invoke('dialog:open-folder'),
   openFiles: () => ipcRenderer.invoke('dialog:open-files'),
   loadPaths: (paths) => ipcRenderer.invoke('paths:load', paths),

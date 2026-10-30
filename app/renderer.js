@@ -2,13 +2,18 @@
 
 (function () {
   const api = window.photoViewer;
+  const i18n = window.i18n;
 
-  if (!api) {
+  if (!api || !i18n) {
     document.body.innerHTML =
       '<p style="font-family: Segoe UI, sans-serif; padding: 32px;">' +
+      'Failed to initialize the application interface. / ' +
       'Falha ao inicializar a interface do aplicativo.</p>';
     return;
   }
+
+  const t = i18n.t;
+  const formatNumber = i18n.formatNumber;
 
   const gallery = document.getElementById('galeria');
   const emptyState = document.getElementById('empty');
@@ -30,6 +35,7 @@
   let dragDepth = 0;
   let toastTimer = 0;
   let toastHideTimer = 0;
+  let lastPayload = null;
 
   // Transição horizontal entre fotos (rápida).
   const SLIDE_DURATION = 200;
@@ -212,10 +218,53 @@
     gallery.addEventListener('hide', cleanupSlide);
   }
 
+  function refreshStatus() {
+    const payload = lastPayload;
+
+    if (!payload) {
+      statusText.textContent = t('app.status.noFolder');
+      document.title = t('app.name');
+      return;
+    }
+
+    if (!Array.isArray(payload.images) || payload.images.length === 0) {
+      if (payload.sourceName) {
+        const label = payload.defaultFolder
+          ? t('app.status.pictures')
+          : payload.sourceName;
+
+        statusText.textContent = t('app.status.noPhotos', { label });
+        document.title = t('app.windowTitle', { label });
+      }
+
+      return;
+    }
+
+    const label = payload.defaultFolder
+      ? t('app.status.pictures')
+      : (payload.sourceName || t('app.status.selection'));
+    const photos = t('app.status.photos', { count: payload.images.length });
+    const limit = payload.truncated
+      ? t('app.status.limit', {
+          max: formatNumber(payload.maxImages || 3000),
+        })
+      : '';
+
+    statusText.textContent = t('app.status.summary', {
+      label,
+      photos,
+      limit,
+    });
+
+    document.title = t('app.windowTitle', { label });
+  }
+
   function render(payload) {
     if (!payload) {
       return;
     }
+
+    lastPayload = payload;
 
     if (payload.error) {
       showToast(payload.error);
@@ -223,12 +272,8 @@
     }
 
     if (!Array.isArray(payload.images) || payload.images.length === 0) {
-      if (payload.sourceName) {
-        statusText.textContent = `${payload.sourceName} · nenhuma foto`;
-        document.title = `${payload.sourceName} — Visualizador de Fotos`;
-      }
-
-      showToast(payload.error || 'Nenhuma imagem encontrada nesta pasta.');
+      refreshStatus();
+      showToast(payload.error || t('app.status.emptyFolder'));
       return;
     }
 
@@ -240,6 +285,7 @@
     for (const image of payload.images) {
       const figure = document.createElement('figure');
       figure.className = 'tile';
+      figure.dataset.brokenLabel = t('app.gallery.broken');
 
       const img = document.createElement('img');
       img.src = image.thumb || image.url;
@@ -274,14 +320,7 @@
     });
 
     bindSlideTransition();
-
-    const count = payload.images.length;
-    const label = payload.sourceName || 'Seleção de fotos';
-    const photos = count === 1 ? '1 foto' : `${count} fotos`;
-    const limit = payload.truncated ? ' · limite de 3000' : '';
-
-    statusText.textContent = `${label} · ${photos}${limit}`;
-    document.title = `${label} — Visualizador de Fotos`;
+    refreshStatus();
 
     window.scrollTo({ top: 0, behavior: 'auto' });
 
@@ -290,7 +329,7 @@
     if (payload.openedFiles && viewer) {
       const startIndex =
         Number.isInteger(payload.autoOpenIndex) && payload.autoOpenIndex >= 0
-          ? Math.min(payload.autoOpenIndex, count - 1)
+          ? Math.min(payload.autoOpenIndex, payload.images.length - 1)
           : 0;
       viewer.view(startIndex);
     }
@@ -308,8 +347,9 @@
       render(payload);
     } catch (error) {
       showToast(
-        'Não foi possível abrir: ' +
-          (error && error.message ? error.message : String(error))
+        t('app.toast.openError', {
+          message: error && error.message ? error.message : String(error),
+        })
       );
     } finally {
       setBusy(false);
@@ -329,12 +369,13 @@
       const result = await api.configureDefaultApps();
 
       if (result && result.ok === false && result.reason === 'not-packaged') {
-        showToast('Disponível na versão instalada do aplicativo.');
+        showToast(t('app.toast.notPackaged'));
       }
     } catch (error) {
       showToast(
-        'Não foi possível abrir as configurações: ' +
-          (error && error.message ? error.message : String(error))
+        t('app.toast.settingsError', {
+          message: error && error.message ? error.message : String(error),
+        })
       );
     }
   }
@@ -349,9 +390,7 @@
   }
 
   api.onDefaultAppsOpened(() => {
-    showToast(
-      'Na tela de Aplicativos padrão, escolha "Visualizador de Fotos" e defina como padrão.'
-    );
+    showToast(t('app.toast.defaultAppsOpened'));
   });
 
   // O menu nativo (Abrir pasta / Abrir fotos) envia o resultado por evento.
@@ -427,7 +466,7 @@
     const paths = files.map((file) => api.getPathForFile(file)).filter(Boolean);
 
     if (!paths.length) {
-      showToast('Não foi possível obter o caminho dos arquivos soltos.');
+      showToast(t('app.toast.noPath'));
       return;
     }
 
@@ -441,6 +480,15 @@
   if (!hasImages) {
     emptyState.hidden = false;
   }
+
+  i18n.apply();
+  refreshStatus();
+
+  // Troca de idioma em runtime: o catálogo já está no renderer, então basta
+  // trocar a língua e repintar os textos (sem recarregar a janela).
+  i18n.onChange(() => {
+    refreshStatus();
+  });
 
   run(() => api.getInitial());
 })();

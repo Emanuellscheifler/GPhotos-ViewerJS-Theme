@@ -1,0 +1,95 @@
+{
+  "app": {
+    "name": "Visor de Fotos",
+    "windowTitle": "{{label}} — Visor de Fotos",
+    "initError": "No se pudo iniciar la interfaz de la aplicación.",
+    "buttons": {
+      "openFolder": "Abrir carpeta",
+      "openPhotos": "Abrir fotos"
+    },
+    "status": {
+      "noFolder": "Ninguna carpeta abierta",
+      "pictures": "Imágenes",
+      "selection": "Selección de fotos",
+      "summary": "{{label}} · {{photos}}{{limit}}",
+      "photos_one": "{{count}} foto",
+      "photos_other": "{{count}} fotos",
+      "limit": " · límite de {{max}}",
+      "noPhotos": "{{label}} · sin fotos",
+      "emptyFolder": "No se encontraron imágenes en esta carpeta."
+    },
+    "empty": {
+      "title": "Abre una carpeta con tus fotos",
+      "copy": "Elige una carpeta o selecciona fotos sueltas. Haz clic en cualquier imagen para abrir el visor a pantalla completa.",
+      "hint": "También puedes arrastrar una carpeta o imágenes a esta ventana.",
+      "formats": "Formatos: JPG, PNG, GIF, WEBP, BMP, AVIF y SVG.",
+      "setDefault": "Establecer como visor de fotos predeterminado de Windows"
+    },
+    "drop": {
+      "title": "Suelta para abrir",
+      "subtitle": "Carpetas o archivos de imagen"
+    },
+    "gallery": {
+      "ariaLabel": "Fotos",
+      "broken": "Imagen no disponible"
+    },
+    "toast": {
+      "defaultAppsOpened": "En la pantalla Aplicaciones predeterminadas, elige \"Visor de Fotos\" y establécelo como predeterminado.",
+      "openError": "No se pudo abrir: {{message}}",
+      "settingsError": "No se pudieron abrir los ajustes: {{message}}",
+      "notPackaged": "Disponible en la versión instalada de la aplicación.",
+      "noPath": "No se pudo obtener la ruta de los archivos soltados."
+    }
+  },
+  "menu": {
+    "file": "Archivo",
+    "openFolder": "Abrir carpeta…",
+    "openPhotos": "Abrir fotos…",
+    "setDefault": "Establecer como visor predeterminado...",
+    "quit": "Salir",
+    "view": "Ver",
+    "fullscreen": "Pantalla completa",
+    "reload": "Recargar",
+    "devtools": "Herramientas para desarrolladores",
+    "help": "Ayuda",
+    "about": "Acerca del Visor de Fotos"
+  },
+  "dialog": {
+    "firstLaunch": {
+      "title": "¿Establecer como visor predeterminado?",
+      "message": "¿Quieres establecer el Visor de Fotos como la aplicación predeterminada para abrir imágenes en Windows?",
+      "detail": "Tus fotos se abrirán automáticamente en este visor al hacer doble clic en ellas en el Explorador de archivos.",
+      "yes": "Sí, establecer como predeterminado",
+      "no": "No, gracias"
+    },
+    "about": {
+      "title": "Acerca de",
+      "version": "Versión {{version}}",
+      "detail": "Visor local de fotos con interfaz a pantalla completa.\nAbre carpetas o archivos de imagen y permite navegar, ampliar,\ngirar y voltear sin enviar nada a internet.\n\nInterfaz basada en ViewerJS (MIT) de Chen Fengyuan."
+    },
+    "notInstalled": {
+      "title": "Versión instalada",
+      "message": "Disponible en la versión instalada de la aplicación.",
+      "detail": "Ejecuta el Visor de Fotos desde el instalador (.msi) para registrar las asociaciones de archivos."
+    },
+    "openFolder": {
+      "title": "Abrir carpeta de fotos",
+      "button": "Abrir carpeta"
+    },
+    "openPhotos": {
+      "title": "Abrir fotos",
+      "button": "Abrir",
+      "filter": "Imágenes"
+    }
+  },
+  "errors": {
+    "noImages": "No se encontraron imágenes.",
+    "noImagesInSelection": "No se encontraron imágenes en la selección.",
+    "noFile": "No se recibió ningún archivo.",
+    "operationFailed": "No se pudo completar la operación.",
+    "fileNotFound": "Archivo no encontrado.",
+    "invalidRequest": "Solicitud no válida.",
+    "notFound": "No encontrado.",
+    "accessDenied": "Acceso denegado."
+  }
+}

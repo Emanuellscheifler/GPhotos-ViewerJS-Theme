@@ -1,0 +1,95 @@
+{
+  "app": {
+    "name": "Visualizador de Fotos",
+    "windowTitle": "{{label}} — Visualizador de Fotos",
+    "initError": "Falha ao inicializar a interface do aplicativo.",
+    "buttons": {
+      "openFolder": "Abrir pasta",
+      "openPhotos": "Abrir fotos"
+    },
+    "status": {
+      "noFolder": "Nenhuma pasta aberta",
+      "pictures": "Imagens",
+      "selection": "Seleção de fotos",
+      "summary": "{{label}} · {{photos}}{{limit}}",
+      "photos_one": "{{count}} foto",
+      "photos_other": "{{count}} fotos",
+      "limit": " · limite de {{max}}",
+      "noPhotos": "{{label}} · nenhuma foto",
+      "emptyFolder": "Nenhuma imagem encontrada nesta pasta."
+    },
+    "empty": {
+      "title": "Abra uma pasta com suas fotos",
+      "copy": "Escolha uma pasta ou selecione fotos soltas. Clique em qualquer imagem para abrir o visualizador em tela cheia.",
+      "hint": "Você também pode arrastar uma pasta ou imagens para esta janela.",
+      "formats": "Formatos: JPG, PNG, GIF, WEBP, BMP, AVIF e SVG.",
+      "setDefault": "Definir como visualizador padrão do Windows"
+    },
+    "drop": {
+      "title": "Solte para abrir",
+      "subtitle": "Pastas ou arquivos de imagem"
+    },
+    "gallery": {
+      "ariaLabel": "Fotos",
+      "broken": "Imagem indisponível"
+    },
+    "toast": {
+      "defaultAppsOpened": "Na tela de Aplicativos padrão, escolha \"Visualizador de Fotos\" e defina como padrão.",
+      "openError": "Não foi possível abrir: {{message}}",
+      "settingsError": "Não foi possível abrir as configurações: {{message}}",
+      "notPackaged": "Disponível na versão instalada do aplicativo.",
+      "noPath": "Não foi possível obter o caminho dos arquivos soltos."
+    }
+  },
+  "menu": {
+    "file": "Arquivo",
+    "openFolder": "Abrir pasta…",
+    "openPhotos": "Abrir fotos…",
+    "setDefault": "Definir como visualizador padrão...",
+    "quit": "Sair",
+    "view": "Visualizar",
+    "fullscreen": "Tela cheia",
+    "reload": "Recarregar",
+    "devtools": "Ferramentas do desenvolvedor",
+    "help": "Ajuda",
+    "about": "Sobre o Visualizador de Fotos"
+  },
+  "dialog": {
+    "firstLaunch": {
+      "title": "Definir como visualizador padrão?",
+      "message": "Deseja definir o Visualizador de Fotos como o aplicativo padrão para abrir imagens no Windows?",
+      "detail": "Isso fará com que suas fotos abram automaticamente neste visualizador ao clicar duas vezes nelas no Explorador de Arquivos.",
+      "yes": "Sim, definir como padrão",
+      "no": "Não, obrigado"
+    },
+    "about": {
+      "title": "Sobre",
+      "version": "Versão {{version}}",
+      "detail": "Visualizador local de fotos com interface em tela cheia.\nAbre pastas ou arquivos de imagem e permite navegar, ampliar,\ngirar e espelhar sem enviar nada para a internet.\n\nInterface baseada no ViewerJS (MIT) de Chen Fengyuan."
+    },
+    "notInstalled": {
+      "title": "Versão instalada",
+      "message": "Disponível na versão instalada do aplicativo.",
+      "detail": "Execute o Visualizador de Fotos a partir do instalador (.msi) para registrar as associações de arquivos."
+    },
+    "openFolder": {
+      "title": "Abrir pasta de fotos",
+      "button": "Abrir pasta"
+    },
+    "openPhotos": {
+      "title": "Abrir fotos",
+      "button": "Abrir",
+      "filter": "Imagens"
+    }
+  },
+  "errors": {
+    "noImages": "Nenhuma imagem encontrada.",
+    "noImagesInSelection": "Nenhuma imagem encontrada na seleção.",
+    "noFile": "Nenhum arquivo recebido.",
+    "operationFailed": "Não foi possível concluir a operação.",
+    "fileNotFound": "Arquivo não encontrado.",
+    "invalidRequest": "Requisição inválida.",
+    "notFound": "Não encontrado.",
+    "accessDenied": "Acesso negado."
+  }
+}

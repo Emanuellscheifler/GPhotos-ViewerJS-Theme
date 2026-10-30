@@ -30,9 +30,23 @@ mesmo repositório. Nenhum asset, ícone ou texto do Google Fotos é usado.
 - Contraste automático dos ícones: ficam escuros sobre fotos claras e claros sobre fotos
   escuras.
 - Registro para aparecer em **Abrir com** e em **Aplicativos padrão** do Windows.
+- Interface em **português (Brasil), inglês, espanhol e russo**, com troca em tempo
+  real pelo menu e seleção no início da instalação.
 - Modo offline: o ViewerJS e o tema são servidos localmente; nenhuma foto sai do
   computador.
 - Limite de 3.000 imagens por abertura e leitura do nível superior da pasta.
+
+## Idiomas
+
+O aplicativo detecta o idioma do Windows na primeira abertura (o instalador também
+permite escolher antes de instalar) e usa **pt-BR** como fallback. A troca pode ser
+feita a qualquer momento em **Idioma / Language / Idioma / Язык** no menu; a escolha
+fica salva em `%APPDATA%\Visualizador de Fotos\settings.json`.
+
+Os textos ficam em `app/locales/{pt-BR,en,es,ru}.json` e a lista de idiomas (usada pelo
+menu e pelo instalador) em `app/locales/languages.json`. A tradução usa
+[i18next](https://www.i18next.com/) com pluralização por locale (`Intl.PluralRules`) e
+números formatados por `Intl.NumberFormat`.
 
 ## Download
 
