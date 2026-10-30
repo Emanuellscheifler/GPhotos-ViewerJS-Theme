@@ -33,14 +33,15 @@ mesmo repositório. Nenhum asset, ícone ou texto do Google Fotos é usado.
 
 ## Download
 
-O instalador `.msi` será publicado em
-[Releases](https://github.com/Emanuellscheifler/GPhotos-ViewerJS-Theme/releases)
-após a aprovação da assinatura de código no [SignPath Foundation](https://signpath.org/).
+O instalador `.msi` está disponível como **pré-release de teste** em
+[Releases](https://github.com/Emanuellscheifler/GPhotos-ViewerJS-Theme/releases).
+Este build ainda **não é assinado**; a versão final será publicada após a aprovação da
+assinatura de código no [SignPath Foundation](https://signpath.org/).
 
 A assinatura de código é fornecida gratuitamente pelo
 [SignPath.io](https://about.signpath.io), com certificado da
-[SignPath Foundation](https://signpath.org). Enquanto a aprovação não sai, o MSI pode ser
-gerado localmente (não assinado):
+[SignPath Foundation](https://signpath.org). O MSI também pode ser gerado localmente
+(não assinado):
 
 ```bash
 npm install
