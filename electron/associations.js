@@ -49,18 +49,19 @@ async function addValue(key, name, value, type = 'REG_SZ') {
 /**
  * Registra o aplicativo como candidato a visualizador padrão no Windows.
  *
- * Isso cria as chaves de "Capabilities" em HKCU, que fazem o app aparecer em
+ * Cria as chaves de "Capabilities" em HKCU, que fazem o app aparecer em
  * Configurações > Aplicativos > Aplicativos padrão. O Windows 10/11 não permite
  * definir o padrão silenciosamente: a escolha final é sempre do usuário.
  *
+ * Usado em tempo de execução (menu e primeira abertura). Na instalação do MSI as
+ * mesmas chaves são gravadas diretamente pelo Windows Installer (ver
+ * scripts/msi-project-created.js).
+ *
+ * @param {string} [exePath] - Caminho do executável. Se omitido, usa process.execPath.
  * @returns {Promise<{ok: boolean, reason?: string}>}
  */
-async function registerAssociations() {
-  if (!app.isPackaged) {
-    return { ok: false, reason: 'not-packaged' };
-  }
-
-  const exe = process.execPath;
+async function registerAssociations(exePath) {
+  const exe = exePath || process.execPath;
   const icon = `"${exe}",0`;
   const command = `"${exe}" "%1"`;
 
@@ -81,18 +82,16 @@ async function registerAssociations() {
   await addValue(CAPABILITIES_KEY, 'ApplicationDescription', DESCRIPTION);
 
   for (const extension of EXTENSIONS) {
-    const progId = `${PROGID_PREFIX}.${extension}`;
-
     await addValue(
       `${CAPABILITIES_KEY}\\FileAssociations`,
       `.${extension}`,
-      progId
+      PROGID_PREFIX
     );
 
     // Garante que o app apareça em "Abrir com" para o tipo de arquivo.
     await addValue(
       `HKCU\\Software\\Classes\\.${extension}\\OpenWithProgids`,
-      progId,
+      PROGID_PREFIX,
       null,
       'REG_NONE'
     );
@@ -107,9 +106,31 @@ async function registerAssociations() {
   return { ok: true };
 }
 
+/**
+ * Wrapper para uso em runtime (packaged app) - abre as configurações do Windows após registrar.
+ */
+async function configureDefaultAppsRuntime() {
+  if (!app.isPackaged) {
+    return { ok: false, reason: 'not-packaged' };
+  }
+
+  const result = await registerAssociations();
+
+  if (!result.ok) {
+    return result;
+  }
+
+  // Abre a página de "Aplicativos padrão" do Windows para o usuário escolher
+  const { shell } = require('electron');
+  await shell.openExternal('ms-settings:defaultapps');
+
+  return result;
+}
+
 module.exports = {
   APP_NAME,
   EXTENSIONS,
   PROGID_PREFIX,
   registerAssociations,
+  configureDefaultAppsRuntime,
 };

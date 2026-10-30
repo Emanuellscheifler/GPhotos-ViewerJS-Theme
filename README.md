@@ -19,6 +19,8 @@ mesmo repositório. Nenhum asset, ícone ou texto do Google Fotos é usado.
 
 - Abre a pasta **Imagens** do Windows por padrão (ou a pasta/arquivo passado na linha de
   comando).
+- Ao abrir uma foto pelo Explorer (duplo clique), a imagem já aparece grande no
+  visualizador; ao abrir uma pasta, aparece a galeria de miniaturas.
 - Abre uma pasta inteira ou uma seleção de fotos, com miniaturas rápidas em cache.
 - Arrasta e solta pastas ou arquivos na janela.
 - **Transição horizontal rápida (200 ms)**: a foto atual desliza para fora enquanto a
@@ -55,9 +57,21 @@ arquivos acima de 100 MB. Instaladores vão para os Releases.
 
 ## Visualizador padrão do Windows
 
-O MSI registra o aplicativo para **JPG, JPEG, PNG, GIF, WEBP, BMP e AVIF**, e o app passa
-a aparecer em **Abrir com** e em **Aplicativos padrão**. O Windows 10/11 não permite
-definir o padrão silenciosamente; a confirmação final é sempre do usuário:
+O aplicativo é registrado como candidato a visualizador padrão em dois momentos:
+
+1. **Durante a instalação do MSI** — o Windows Installer grava as chaves de
+   *Capabilities* e *RegisteredApplications* em `HKCU`, então o app já aparece em
+   **Abrir com** e em **Aplicativos padrão** logo após instalar, inclusive em
+   instalações silenciosas (`/quiet`).
+2. **Na primeira abertura** — o app pergunta se você deseja defini-lo como
+   visualizador padrão de imagens. Se aceitar, abre a tela **Aplicativos padrão**
+   do Windows para você confirmar a escolha.
+
+Você também pode fazer isso a qualquer momento por
+**Arquivo → Definir como visualizador padrão...**.
+
+O Windows 10/11 não permite definir o padrão silenciosamente; a confirmação final é
+sempre do usuário:
 
 1. No aplicativo, abra **Arquivo → Definir como visualizador padrão...**.
 2. A tela **Aplicativos padrão** do Windows será aberta.

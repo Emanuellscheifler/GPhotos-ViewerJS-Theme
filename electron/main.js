@@ -9,13 +9,12 @@ const {
   Menu,
   nativeImage,
   nativeTheme,
-  shell,
 } = require('electron');
 const fs = require('node:fs');
 const fsp = fs.promises;
 const path = require('node:path');
 const { Readable } = require('node:stream');
-const { registerAssociations } = require('./associations');
+const { configureDefaultAppsRuntime } = require('./associations');
 
 const SCHEME = 'viewer';
 const HOST = 'local';
@@ -111,6 +110,90 @@ function saveSettings() {
   } catch {
     // Preferência não crítica: segue sem salvar.
   }
+}
+
+// ---------------------------------------------------------------------------
+// Primeira execução: oferece definir como visualizador padrão
+// ---------------------------------------------------------------------------
+
+let firstLaunchChecked = false;
+
+function firstLaunchFlagFile() {
+  return path.join(app.getPath('userData'), 'first-launch-complete');
+}
+
+function isFirstLaunch() {
+  try {
+    return !fs.existsSync(firstLaunchFlagFile());
+  } catch {
+    return true;
+  }
+}
+
+function markFirstLaunchComplete() {
+  try {
+    fs.mkdirSync(path.dirname(firstLaunchFlagFile()), { recursive: true });
+    fs.writeFileSync(firstLaunchFlagFile(), 'done', 'utf8');
+  } catch {
+    // Ignora erros
+  }
+}
+
+// Garante que o diálogo apareça no máximo uma vez por execução.
+function checkFirstLaunchOnce() {
+  if (firstLaunchChecked) {
+    return;
+  }
+
+  firstLaunchChecked = true;
+
+  checkFirstLaunch().catch((error) => {
+    console.error('Falha ao verificar a primeira execução:', error);
+  });
+}
+
+async function checkFirstLaunch() {
+  // Só faz sentido na versão instalada: em desenvolvimento as associações não
+  // são registradas e o flag não deve consumir a primeira abertura real.
+  if (!app.isPackaged) {
+    return;
+  }
+
+  if (!isFirstLaunch()) {
+    return;
+  }
+
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    return;
+  }
+
+  const { dialog } = require('electron');
+
+  const result = await dialog.showMessageBox(mainWindow, {
+    type: 'question',
+    title: 'Definir como visualizador padrão?',
+    message: 'Deseja definir o Visualizador de Fotos como o aplicativo padrão para abrir imagens no Windows?',
+    detail: 'Isso fará com que suas fotos abram automaticamente neste visualizador ao clicar duas vezes nelas no Explorador de Arquivos.',
+    buttons: ['Sim, definir como padrão', 'Não, obrigado'],
+    defaultId: 0,
+    cancelId: 1,
+    noLink: true,
+  });
+
+  if (result.response === 0) {
+    // Usuário escolheu "Sim" - registra associações e abre configurações do Windows
+    try {
+      await configureDefaultAppsRuntime();
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('default-apps:opened');
+      }
+    } catch (error) {
+      console.error('Falha ao configurar visualizador padrão:', error);
+    }
+  }
+
+  // Marca como concluído independentemente da escolha
+  markFirstLaunchComplete();
 }
 
 function mimeFor(filePath) {
@@ -251,6 +334,7 @@ async function loadPaths(inputPaths) {
   let sourceName = '';
   let folder = '';
   let truncated = false;
+  let hasFile = false;
 
   for (const input of inputPaths) {
     let resolved;
@@ -278,6 +362,8 @@ async function loadPaths(inputPaths) {
         }
       }
     } else if (stat.isFile() && isImageFile(resolved)) {
+      hasFile = true;
+
       const image = imageRecord(resolved);
 
       if (!seen.has(image.path)) {
@@ -299,7 +385,11 @@ async function loadPaths(inputPaths) {
       : (images[0] ? images[0].name : '');
   }
 
-  return { source, sourceName, folder, images, truncated };
+  // Abriu arquivos específicos (e não uma pasta): a interface abre a foto
+  // diretamente no visualizador, em vez de mostrar a galeria de miniaturas.
+  const openedFiles = hasFile && !folder;
+
+  return { source, sourceName, folder, images, truncated, openedFiles };
 }
 
 function pathsFromArgv(argv) {
@@ -396,7 +486,7 @@ async function pickFiles() {
 }
 
 async function configureDefaultApps() {
-  const result = await registerAssociations();
+  const result = await configureDefaultAppsRuntime();
 
   if (!result.ok) {
     await dialog.showMessageBox(mainWindow, {
@@ -411,8 +501,6 @@ async function configureDefaultApps() {
 
     return result;
   }
-
-  await shell.openExternal('ms-settings:defaultapps');
 
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('default-apps:opened');
@@ -557,6 +645,11 @@ function createWindow() {
     }
 
     mainWindow.show();
+    mainWindow.focus();
+
+    // A janela já está visível: agora é seguro abrir o diálogo modal de
+    // primeira execução sem que o show() o dispense com o botão padrão.
+    checkFirstLaunchOnce();
   });
 
   mainWindow.on('close', saveSettings);

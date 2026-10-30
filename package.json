@@ -48,6 +48,7 @@
       "build/icon.ico",
       "package.json"
     ],
+    "msiProjectCreated": "scripts/msi-project-created.js",
     "fileAssociations": [
       {
         "ext": [

@@ -284,6 +284,16 @@
     document.title = `${label} — Visualizador de Fotos`;
 
     window.scrollTo({ top: 0, behavior: 'auto' });
+
+    // Aberto como arquivo(s) e não como pasta: mostra a foto grande direto,
+    // sem passar pela galeria de miniaturas.
+    if (payload.openedFiles && viewer) {
+      const startIndex =
+        Number.isInteger(payload.autoOpenIndex) && payload.autoOpenIndex >= 0
+          ? Math.min(payload.autoOpenIndex, count - 1)
+          : 0;
+      viewer.view(startIndex);
+    }
   }
 
   async function run(task) {
