@@ -33,11 +33,14 @@ mesmo repositório. Nenhum asset, ícone ou texto do Google Fotos é usado.
 
 ## Download
 
-O instalador `.msi` será publicado em **Releases** após a aprovação da assinatura de
-código no [SignPath Foundation](https://signpath.org/). Acompanhe o status em
-[docs/SIGNING.md](docs/SIGNING.md).
+O instalador `.msi` será publicado em
+[Releases](https://github.com/Emanuellscheifler/GPhotos-ViewerJS-Theme/releases)
+após a aprovação da assinatura de código no [SignPath Foundation](https://signpath.org/).
 
-Enquanto isso, o MSI pode ser gerado localmente (não assinado):
+A assinatura de código é fornecida gratuitamente pelo
+[SignPath.io](https://about.signpath.io), com certificado da
+[SignPath Foundation](https://signpath.org). Enquanto a aprovação não sai, o MSI pode ser
+gerado localmente (não assinado):
 
 ```bash
 npm install
@@ -47,6 +50,20 @@ npm run dist
 
 O MSI tem cerca de 121 MB e **não é versionado no repositório** — o GitHub bloqueia
 arquivos acima de 100 MB. Instaladores vão para os Releases.
+
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by
+[SignPath Foundation](https://signpath.org).
+
+- Committers and reviewers: [Emanuellscheifler](https://github.com/Emanuellscheifler)
+- Approvers: [Emanuellscheifler](https://github.com/Emanuellscheifler)
+
+Privacy policy: [PRIVACY.md](PRIVACY.md). This program will not transfer any information
+to other networked systems unless specifically requested by the user or the person
+installing or operating it.
+
+See [docs/SIGNING.md](docs/SIGNING.md) for the signing setup.
 
 ## Requisitos
 
