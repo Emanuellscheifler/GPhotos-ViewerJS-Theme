@@ -63,7 +63,7 @@ A assinatura de código é fornecida gratuitamente pelo
 ```bash
 npm install
 npm run dist
-# dist/Visualizador-de-Fotos-1.0.2-x64.msi
+# dist/Visualizador-de-Fotos-1.1.0-x64.msi
 ```
 
 O MSI tem cerca de 121 MB e **não é versionado no repositório** — o GitHub bloqueia
